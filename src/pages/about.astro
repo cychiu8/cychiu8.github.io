@@ -1,0 +1,31 @@
+---
+import Layout from '../layouts/BlogPost.astro';
+---
+
+<Layout
+	title="About"
+	description="Why this blog exists: a public notebook for my own learning and memory."
+	pubDate={new Date('2026-07-10')}
+>
+	<p>
+		This blog is a public notebook. I write it mainly <strong>for myself</strong> — to keep
+		learning and to remember. Writing things down forces me to understand them properly, and
+		reading them back later reminds me where I've been. If anyone else finds these notes useful,
+		that's a bonus, not the goal.
+	</p>
+
+	<p>It mixes life and technical content, organized by tags:</p>
+
+	<ul>
+		<li><strong>life</strong> — life in Japan (pregnancy, baby born)</li>
+		<li><strong>japan</strong> — living in Japan</li>
+		<li><strong>opensource</strong> — starting open source, and lessons learned from it</li>
+		<li><strong>career</strong> — career records</li>
+		<li><strong>tech</strong> — technical articles</li>
+	</ul>
+
+	<p>
+		Posts are written in Traditional Chinese, English, or Japanese — one language per post,
+		whichever fits the topic and my mood. Each post is tagged with its language.
+	</p>
+</Layout>

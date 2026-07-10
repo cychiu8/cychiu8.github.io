@@ -1,0 +1,82 @@
+---
+import { getCollection } from 'astro:content';
+import BaseHead from '../../components/BaseHead.astro';
+import Footer from '../../components/Footer.astro';
+import Header from '../../components/Header.astro';
+import { CATEGORIES, LANGUAGES, LANGUAGE_INFO, SITE_TITLE, withBase } from '../../consts';
+
+const posts = await getCollection('blog');
+
+const categoryCounts = CATEGORIES.map((tag) => ({
+	tag,
+	label: `#${tag}`,
+	count: posts.filter((post) => post.data.tags.includes(tag)).length,
+}));
+
+const languageCounts = LANGUAGES.map((lang) => ({
+	tag: lang,
+	label: LANGUAGE_INFO[lang].label,
+	count: posts.filter((post) => post.data.lang === lang).length,
+}));
+---
+
+<!doctype html>
+<html lang="en">
+	<head>
+		<BaseHead title={`Tags - ${SITE_TITLE}`} description="Browse posts by tag or language." />
+		<style>
+			ul {
+				list-style-type: none;
+				margin: 0;
+				padding: 0;
+				display: flex;
+				flex-wrap: wrap;
+				gap: 0.75em;
+			}
+			ul a {
+				display: inline-block;
+				padding: 0.3em 1em;
+				border-radius: 999px;
+				background: rgb(var(--gray-light));
+				color: rgb(var(--gray-dark));
+				text-decoration: none;
+			}
+			ul a:hover {
+				color: rgb(var(--accent));
+			}
+			.count {
+				color: rgb(var(--gray));
+			}
+		</style>
+	</head>
+	<body>
+		<Header />
+		<main>
+			<h1>Tags</h1>
+			<ul>
+				{
+					categoryCounts.map(({ tag, label, count }) => (
+						<li>
+							<a href={withBase(`/tags/${tag}/`)}>
+								{label} <span class="count">({count})</span>
+							</a>
+						</li>
+					))
+				}
+			</ul>
+			<h2>Languages</h2>
+			<ul>
+				{
+					languageCounts.map(({ tag, label, count }) => (
+						<li>
+							<a href={withBase(`/tags/${tag}/`)}>
+								{label} <span class="count">({count})</span>
+							</a>
+						</li>
+					))
+				}
+			</ul>
+		</main>
+		<Footer />
+	</body>
+</html>
