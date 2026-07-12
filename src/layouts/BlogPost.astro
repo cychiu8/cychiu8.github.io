@@ -1,113 +1,70 @@
 ---
 import { Image } from 'astro:assets';
 import type { CollectionEntry } from 'astro:content';
-import BaseHead from '../components/BaseHead.astro';
-import Footer from '../components/Footer.astro';
 import FormattedDate from '../components/FormattedDate.astro';
-import Header from '../components/Header.astro';
-import { LANGUAGE_INFO, withBase, type Language } from '../consts';
+import Tag from '../components/Tag.astro';
+import { LANGUAGE_INFO } from '../consts';
+import BaseLayout from './BaseLayout.astro';
 
-type BlogData = CollectionEntry<'blog'>['data'];
-type Props = Omit<BlogData, 'tags' | 'lang'> & {
-	tags?: BlogData['tags'];
-	lang?: Language;
-};
+interface Props {
+	data: CollectionEntry<'blog'>['data'];
+	readTime?: string;
+}
 
-const { title, description, pubDate, updatedDate, heroImage, tags = [], lang = 'en' } = Astro.props;
+const { data, readTime } = Astro.props;
+const { title, description, pubDate, updatedDate, heroImage, tags, lang } = data;
 ---
 
-<html lang={LANGUAGE_INFO[lang].htmlLang}>
-	<head>
-		<BaseHead title={title} description={description} />
-		<style>
-			main {
-				width: calc(100% - 2em);
-				max-width: 100%;
-				margin: 0;
-			}
-			.hero-image {
-				width: 100%;
-			}
-			.hero-image img {
-				display: block;
-				margin: 0 auto;
-				border-radius: 12px;
-				box-shadow: var(--box-shadow);
-			}
-			.prose {
-				width: 720px;
-				max-width: calc(100% - 2em);
-				margin: auto;
-				padding: 1em;
-				color: rgb(var(--gray-dark));
-			}
-			.title {
-				margin-bottom: 1em;
-				padding: 1em 0;
-				text-align: center;
-				line-height: 1;
-			}
-			.title h1 {
-				margin: 0 0 0.5em 0;
-			}
-			.date {
-				margin-bottom: 0.5em;
-				color: rgb(var(--gray));
-			}
-			.last-updated-on {
-				font-style: italic;
-			}
-			.tags {
-				display: flex;
-				justify-content: center;
-				flex-wrap: wrap;
-				gap: 0.5em;
-				margin-top: 0.75em;
-				font-size: 0.9em;
-			}
-			.tags a {
-				padding: 0.15em 0.7em;
-				border-radius: 999px;
-				background: rgb(var(--gray-light));
-				color: rgb(var(--gray-dark));
-				text-decoration: none;
-			}
-			.tags a:hover {
-				color: rgb(var(--accent));
-			}
-		</style>
-	</head>
+<BaseLayout
+	title={title}
+	description={description}
+	image={heroImage}
+	articleDate={pubDate.toISOString()}
+	htmlLang={LANGUAGE_INFO[lang].htmlLang}
+>
+	<article class="min-w-full md:py-4 sm:max-w-none md:max-w-none" data-pagefind-body>
+		<header class="mb-3 flex flex-col justify-center items-center gap-6">
+			<div class="flex flex-col gap-2">
+				<div
+					class="flex flex-wrap items-center justify-center gap-x-2 text-sm text-gray-600 dark:text-gray-400"
+				>
+					<span>Published <FormattedDate date={pubDate} /></span>
+					{readTime && <span class="font-bold">- {readTime}</span>}
+					{
+						updatedDate && (
+							<span class="italic">
+								(Updated <FormattedDate date={updatedDate} />)
+							</span>
+						)
+					}
+				</div>
+				<h1 class="text-center text-4xl md:text-6xl md:pb-2.5 font-semibold">
+					{title}
+				</h1>
+			</div>
 
-	<body>
-		<Header />
-		<main>
-			<article>
-				<div class="hero-image">
-					{heroImage && <Image width={1020} height={510} src={heroImage} alt="" />}
-				</div>
-				<div class="prose">
-					<div class="title">
-						<div class="date">
-							<FormattedDate date={pubDate} />
-							{
-								updatedDate && (
-									<div class="last-updated-on">
-										Last updated on <FormattedDate date={updatedDate} />
-									</div>
-								)
-							}
-						</div>
-						<h1>{title}</h1>
-						<div class="tags">
-							{tags.map((tag) => <a href={withBase(`/tags/${tag}/`)}>#{tag}</a>)}
-							<a href={withBase(`/tags/${lang}/`)}>{LANGUAGE_INFO[lang].label}</a>
-						</div>
-						<hr />
-					</div>
-					<slot />
-				</div>
-			</article>
-		</main>
-		<Footer />
-	</body>
-</html>
+			<div class="flex flex-wrap justify-center items-center gap-2 gap-y-4 md:gap-5">
+				{tags.map((tag) => <Tag tag={tag} />)}
+				<Tag tag={lang} label={LANGUAGE_INFO[lang].label} />
+			</div>
+		</header>
+
+		{
+			heroImage && (
+				<Image
+					src={heroImage}
+					width={1000}
+					height={500}
+					quality={100}
+					loading="eager"
+					class="rounded-md w-full max-h-[300px] md:max-h-[500px] my-8 object-cover"
+					alt={`Cover image for ${title}`}
+				/>
+			)
+		}
+
+		<hr class="border-stone-200 dark:border-gray-700" />
+
+		<slot />
+	</article>
+</BaseLayout>

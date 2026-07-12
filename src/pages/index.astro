@@ -1,72 +1,29 @@
 ---
-import { getCollection } from 'astro:content';
-import BaseHead from '../components/BaseHead.astro';
-import Footer from '../components/Footer.astro';
-import FormattedDate from '../components/FormattedDate.astro';
-import Header from '../components/Header.astro';
-import { SITE_DESCRIPTION, SITE_TITLE, withBase } from '../consts';
+import ListCategories from '../components/ListCategories.astro';
+import ListPosts from '../components/ListPosts.astro';
+import TitlePage from '../components/TitlePage.astro';
+import { SITE_TITLE } from '../consts';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { getPosts } from '../utils/posts';
 
-const posts = (await getCollection('blog'))
-	.sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
-	.slice(0, 5);
+const MAX_POSTS = 5; // max number of posts to show on the home page
+const posts = await getPosts(MAX_POSTS);
 ---
 
-<!doctype html>
-<html lang="en">
-	<head>
-		<BaseHead title={SITE_TITLE} description={SITE_DESCRIPTION} />
-		<style>
-			ul {
-				list-style-type: none;
-				margin: 0;
-				padding: 0;
-			}
-			ul li {
-				margin-bottom: 1em;
-			}
-			ul li a {
-				text-decoration: none;
-			}
-			.title {
-				margin: 0;
-				color: rgb(var(--black));
-			}
-			.date {
-				margin: 0;
-				color: rgb(var(--gray));
-			}
-			ul li a:hover .title,
-			ul li a:hover .date {
-				color: rgb(var(--accent));
-			}
-		</style>
-	</head>
-	<body>
-		<Header />
-		<main>
-			<h1>Hi, I'm CY 👋</h1>
-			<p>
-				This is my public notebook — notes on life in Japan, open source, career, and tech,
-				written mainly for myself to keep learning and to remember. Posts are in Traditional
-				Chinese, English, or Japanese, one language per post.
-			</p>
-			<h2>Recent posts</h2>
-			<ul>
-				{
-					posts.map((post) => (
-						<li>
-							<a href={withBase(`/blog/${post.id}/`)}>
-								<h4 class="title">{post.data.title}</h4>
-								<p class="date">
-									<FormattedDate date={post.data.pubDate} />
-								</p>
-							</a>
-						</li>
-					))
-				}
-			</ul>
-			<p><a href={withBase('/blog/')}>All posts →</a></p>
-		</main>
-		<Footer />
-	</body>
-</html>
+<BaseLayout title={SITE_TITLE}>
+	<div class="flex flex-col gap-4">
+		<TitlePage title={SITE_TITLE} />
+		<p class="text-gray-700 dark:text-gray-300 max-w-2xl">
+			Hi, I'm CY 👋 — notes on life in Japan, open source, career, and tech, written mainly for
+			myself to keep learning and to remember. Posts are in Traditional Chinese, English, or
+			Japanese — one language per post.
+		</p>
+	</div>
+
+	<ListCategories />
+
+	<div>
+		<h2 class="text-lg font-medium tracking-wide text-end">Latest Posts</h2>
+		<ListPosts firstBig={true} posts={posts} />
+	</div>
+</BaseLayout>

@@ -1,0 +1,31 @@
+---
+import type { Page } from 'astro';
+import type { Post } from '../utils/posts';
+import Icon from './icons/Icon.astro';
+
+interface Props {
+	page: Page<Post>;
+}
+
+const { page } = Astro.props;
+
+const buttonClass =
+	'flex items-center justify-center px-8 md:px-4 h-10 text-base font-medium text-black bg-white border border-gray-300 rounded-lg hover:bg-gray-100 hover:text-gray-700 dark:bg-transparent dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white';
+---
+
+{
+	(page.url.prev || page.url.next) && (
+		<div class="flex gap-5 md:gap-1 justify-around md:justify-end">
+			{page.url.prev && (
+				<a href={page.url.prev} class={buttonClass} aria-label="Previous page">
+					<Icon name="arrow-left" size={16} />
+				</a>
+			)}
+			{page.url.next && (
+				<a href={page.url.next} class:list={[buttonClass, 'ml-3']} aria-label="Next page">
+					<Icon name="arrow-right" size={16} />
+				</a>
+			)}
+		</div>
+	)
+}

@@ -1,0 +1,52 @@
+---
+// Single icon component with hand-rolled 24px stroke paths.
+type IconName =
+	| 'search'
+	| 'sun'
+	| 'moon'
+	| 'menu'
+	| 'tag'
+	| 'arrow-up-right'
+	| 'arrow-left'
+	| 'arrow-right'
+	| 'github'
+	| 'rss';
+
+interface Props {
+	name: IconName;
+	size?: number;
+	class?: string;
+}
+
+const { name, size = 24, class: className } = Astro.props;
+
+const paths: Record<IconName, string> = {
+	search: 'M21 21l-4.35-4.35M17 10.5a6.5 6.5 0 1 1-13 0 6.5 6.5 0 0 1 13 0z',
+	sun: 'M12 17a5 5 0 1 0 0-10 5 5 0 0 0 0 10zM12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42',
+	moon: 'M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z',
+	menu: 'M3 6h18M3 12h18M3 18h18',
+	tag: 'M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82zM7 7h.01',
+	'arrow-up-right': 'M7 17L17 7M7 7h10v10',
+	'arrow-left': 'M19 12H5M12 19l-7-7 7-7',
+	'arrow-right': 'M5 12h14M12 5l7 7-7 7',
+	github:
+		'M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77 5.44 5.44 0 0 0 3.5 8.55c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22',
+	rss: 'M4 11a9 9 0 0 1 9 9M4 4a16 16 0 0 1 16 16M5 20a1 1 0 1 0 0-2 1 1 0 0 0 0 2z',
+};
+---
+
+<svg
+	xmlns="http://www.w3.org/2000/svg"
+	width={size}
+	height={size}
+	viewBox="0 0 24 24"
+	fill="none"
+	stroke="currentColor"
+	stroke-width="2"
+	stroke-linecap="round"
+	stroke-linejoin="round"
+	class={className}
+	aria-hidden="true"
+>
+	<path d={paths[name]}></path>
+</svg>

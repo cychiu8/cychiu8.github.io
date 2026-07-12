@@ -1,0 +1,109 @@
+---
+// Full-text search over the built site, powered by Pagefind.
+// The index is generated at build time (`pagefind --site dist`), so the
+// modal shows a hint instead of results during `astro dev`.
+import '@pagefind/default-ui/css/ui.css';
+import Icon from './icons/Icon.astro';
+---
+
+<site-search id="search" class="ms-auto">
+	<button
+		data-open-modal
+		disabled
+		class="flex items-center justify-center rounded-md gap-1 cursor-pointer"
+		aria-label="Search"
+	>
+		<Icon name="search" />
+	</button>
+	<dialog
+		aria-label="search"
+		class="h-full max-h-full w-full max-w-full border border-zinc-400 bg-paper dark:bg-[#0a0910ec] shadow backdrop:backdrop-blur-sm sm:mx-auto sm:mb-auto sm:mt-16 sm:h-max sm:max-h-[calc(100%-8rem)] sm:min-h-60 sm:w-5/6 sm:max-w-3xl sm:rounded-md"
+	>
+		<div class="dialog-frame flex flex-col gap-4 p-6 pt-12 sm:pt-6">
+			<button
+				data-close-modal
+				class="ms-auto cursor-pointer rounded-full bg-black text-white px-4 py-2 dark:bg-white dark:text-black"
+			>
+				Close
+			</button>
+			{
+				import.meta.env.DEV ? (
+					<div class="mx-auto text-center dark:text-white">
+						<p>
+							Search is only available in production builds. <br />
+							Run <code>npm run build && npm run preview</code> to try it locally.
+						</p>
+					</div>
+				) : (
+					<div class="search-container dark:text-white">
+						<div id="pagefind__search" />
+					</div>
+				)
+			}
+		</div>
+	</dialog>
+</site-search>
+
+<script>
+	class SiteSearch extends HTMLElement {
+		constructor() {
+			super();
+			const openBtn = this.querySelector<HTMLButtonElement>('button[data-open-modal]')!;
+			const closeBtn = this.querySelector<HTMLButtonElement>('button[data-close-modal]')!;
+			const dialog = this.querySelector('dialog')!;
+			const dialogFrame = this.querySelector('.dialog-frame')!;
+
+			const onWindowClick = (event: MouseEvent) => {
+				if (
+					document.body.contains(event.target as Node) &&
+					!dialogFrame.contains(event.target as Node)
+				)
+					closeModal();
+			};
+
+			const openModal = (event?: MouseEvent) => {
+				dialog.showModal();
+				document.body.classList.add('overflow-hidden');
+				this.querySelector('input')?.focus();
+				event?.stopPropagation();
+				window.addEventListener('click', onWindowClick);
+			};
+
+			const closeModal = () => {
+				dialog.close();
+				document.body.classList.remove('overflow-hidden');
+				window.removeEventListener('click', onWindowClick);
+			};
+
+			openBtn.addEventListener('click', openModal);
+			openBtn.disabled = false;
+			closeBtn.addEventListener('click', closeModal);
+
+			// `/` opens search from anywhere.
+			window.addEventListener('keydown', (e) => {
+				if (e.key === '/' && !dialog.open) {
+					openModal();
+					e.preventDefault();
+				}
+			});
+
+			window.addEventListener('DOMContentLoaded', () => {
+				if (import.meta.env.DEV) return;
+				const onIdle =
+					window.requestIdleCallback || ((cb: IdleRequestCallback) => setTimeout(cb, 1));
+				onIdle(async () => {
+					// @ts-expect-error — no types shipped for the UI bundle
+					const { PagefindUI } = await import('@pagefind/default-ui');
+					new PagefindUI({
+						element: '#pagefind__search',
+						baseUrl: import.meta.env.BASE_URL,
+						bundlePath: import.meta.env.BASE_URL.replace(/\/$/, '') + '/pagefind/',
+						showImages: false,
+					});
+				});
+			});
+		}
+	}
+
+	customElements.define('site-search', SiteSearch);
+</script>

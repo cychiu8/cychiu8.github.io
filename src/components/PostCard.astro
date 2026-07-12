@@ -1,0 +1,73 @@
+---
+import { Image } from 'astro:assets';
+import placeholder1 from '../assets/blog-placeholder-1.jpg';
+import placeholder2 from '../assets/blog-placeholder-2.jpg';
+import placeholder3 from '../assets/blog-placeholder-3.jpg';
+import placeholder4 from '../assets/blog-placeholder-4.jpg';
+import placeholder5 from '../assets/blog-placeholder-5.jpg';
+import { LANGUAGE_INFO, withBase } from '../consts';
+import type { Post } from '../utils/posts';
+import FormattedDate from './FormattedDate.astro';
+import Icon from './icons/Icon.astro';
+
+interface Props {
+	post: Post;
+	readTime?: string;
+}
+
+const { post, readTime } = Astro.props;
+const { title, description, pubDate, heroImage, tags, lang } = post.data;
+
+// Posts without a hero image get a stable placeholder picked from the post id.
+const placeholders = [placeholder1, placeholder2, placeholder3, placeholder4, placeholder5];
+const idHash = [...post.id].reduce((sum, ch) => sum + ch.charCodeAt(0), 0);
+const image = heroImage ?? placeholders[idHash % placeholders.length];
+
+const href = withBase(`/blog/${post.id}/`);
+---
+
+<article class="grid grid-rows-[300px_auto] md:grid-rows-[300px_220px] min-h-full group">
+	<a class="relative overflow-hidden rounded-xs" href={href}>
+		<Image
+			src={image}
+			width={600}
+			height={200}
+			format="webp"
+			class="h-full min-w-full object-cover hover:scale-[101%] transition-all duration-200"
+			alt={`Cover image for ${title}`}
+		/>
+
+		<div class="z-30 absolute bottom-0 w-full h-20">
+			<div class="-z-10 absolute bottom-0 glass w-full min-h-full"></div>
+			<div class="flex items-center justify-between gap-x-1 text-white px-6 py-4">
+				<div class="flex flex-col gap-1">
+					<FormattedDate date={pubDate} />
+					{readTime && <span class="text-sm">{readTime}</span>}
+				</div>
+
+				<span class="text-sm">{[...tags, LANGUAGE_INFO[lang].label].join(' · ')}</span>
+			</div>
+		</div>
+	</a>
+
+	<div class="flex justify-between flex-col gap-4 md:gap-0 py-6 pl-1">
+		<div class="flex flex-col gap-2">
+			<a class="text-2xl font-semibold -tracking-wider" href={href}>
+				{title}
+			</a>
+			<p class="overflow-hidden line-clamp-3 text-gray-700 dark:text-white mb-5 font-normal md:pr-[15%]">
+				{description}
+			</p>
+		</div>
+
+		<footer>
+			<a
+				href={href}
+				class="inline-flex items-center dark:text-white hover:translate-x-1 transition-transform duration-150 ease-in-out font-semibold gap-1"
+				aria-label={`Read ${title}`}
+			>
+				Read Post <Icon name="arrow-up-right" size={18} />
+			</a>
+		</footer>
+	</div>
+</article>

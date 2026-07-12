@@ -2,14 +2,8 @@
 const today = new Date();
 ---
 
-<footer>
+<footer
+	class="flex justify-center items-center text-center w-full px-16 h-28 border-t-2 border-stone-200 dark:border-gray-700 text-sm text-gray-600 dark:text-gray-400"
+>
 	&copy; {today.getFullYear()} CY. Written for my own learning and memory.
 </footer>
-<style>
-	footer {
-		padding: 2em 1em 6em 1em;
-		background: linear-gradient(var(--gray-gradient)) no-repeat;
-		color: rgb(var(--gray));
-		text-align: center;
-	}
-</style>

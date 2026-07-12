@@ -1,0 +1,41 @@
+---
+import type { GetStaticPaths, Page } from 'astro';
+import ListCategories from '../../../components/ListCategories.astro';
+import ListPosts from '../../../components/ListPosts.astro';
+import Pagination from '../../../components/Pagination.astro';
+import TitlePage from '../../../components/TitlePage.astro';
+import { CATEGORIES, LANGUAGES, LANGUAGE_INFO, SITE_TITLE } from '../../../consts';
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import { getPosts, type Post } from '../../../utils/posts';
+
+export const getStaticPaths = (async ({ paginate }) => {
+	const posts = await getPosts();
+
+	// One paginated series per category tag and per language tag.
+	return [...CATEGORIES, ...LANGUAGES].flatMap((tag) => {
+		const isLanguage = (LANGUAGES as readonly string[]).includes(tag);
+		const filtered = posts.filter((post) =>
+			isLanguage ? post.data.lang === tag : (post.data.tags as string[]).includes(tag),
+		);
+		return paginate(filtered, { params: { tag }, pageSize: 6 });
+	});
+}) satisfies GetStaticPaths;
+
+interface Props {
+	page: Page<Post>;
+}
+
+const { tag } = Astro.params;
+const { page } = Astro.props;
+
+const isLanguage = (LANGUAGES as readonly string[]).includes(tag!);
+const heading = isLanguage ? LANGUAGE_INFO[tag as keyof typeof LANGUAGE_INFO].label : `#${tag}`;
+const isCategory = (CATEGORIES as readonly string[]).includes(tag!);
+---
+
+<BaseLayout title={`${heading} - ${SITE_TITLE}`} description={`Posts tagged ${heading}.`}>
+	<TitlePage title={heading} />
+	<ListCategories activeCategory={isCategory ? tag : undefined} />
+	<ListPosts posts={page.data} />
+	<Pagination page={page} />
+</BaseLayout>

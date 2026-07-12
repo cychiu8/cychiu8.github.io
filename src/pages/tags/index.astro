@@ -1,11 +1,10 @@
 ---
-import { getCollection } from 'astro:content';
-import BaseHead from '../../components/BaseHead.astro';
-import Footer from '../../components/Footer.astro';
-import Header from '../../components/Header.astro';
+import TitlePage from '../../components/TitlePage.astro';
 import { CATEGORIES, LANGUAGES, LANGUAGE_INFO, SITE_TITLE, withBase } from '../../consts';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getPosts } from '../../utils/posts';
 
-const posts = await getCollection('blog');
+const posts = await getPosts();
 
 const categoryCounts = CATEGORIES.map((tag) => ({
 	tag,
@@ -18,65 +17,48 @@ const languageCounts = LANGUAGES.map((lang) => ({
 	label: LANGUAGE_INFO[lang].label,
 	count: posts.filter((post) => post.data.lang === lang).length,
 }));
+
+const chipClass =
+	'inline-block bg-slate-200 text-gray-700 dark:bg-slate-800 dark:text-gray-200 rounded-full px-4 py-1.5 text-sm font-semibold hover:bg-indigo-300 hover:text-white dark:hover:bg-indigo-400 transition-colors';
 ---
 
-<!doctype html>
-<html lang="en">
-	<head>
-		<BaseHead title={`Tags - ${SITE_TITLE}`} description="Browse posts by tag or language." />
-		<style>
-			ul {
-				list-style-type: none;
-				margin: 0;
-				padding: 0;
-				display: flex;
-				flex-wrap: wrap;
-				gap: 0.75em;
+<BaseLayout title={`Tags - ${SITE_TITLE}`} description="Browse posts by tag or language.">
+	<TitlePage title="Tags" />
+
+	<div class="flex flex-col gap-8">
+		<div class="flex flex-wrap gap-3">
+			{
+				categoryCounts.map(({ tag, label, count }) =>
+					count > 0 ? (
+						<a href={withBase(`/tags/${tag}/`)} class={chipClass}>
+							{label} <span class="opacity-60">({count})</span>
+						</a>
+					) : (
+						<span class:list={[chipClass, 'opacity-40 hover:bg-slate-200 hover:text-gray-700']}>
+							{label} <span class="opacity-60">(0)</span>
+						</span>
+					),
+				)
 			}
-			ul a {
-				display: inline-block;
-				padding: 0.3em 1em;
-				border-radius: 999px;
-				background: rgb(var(--gray-light));
-				color: rgb(var(--gray-dark));
-				text-decoration: none;
-			}
-			ul a:hover {
-				color: rgb(var(--accent));
-			}
-			.count {
-				color: rgb(var(--gray));
-			}
-		</style>
-	</head>
-	<body>
-		<Header />
-		<main>
-			<h1>Tags</h1>
-			<ul>
+		</div>
+
+		<div>
+			<h2 class="text-2xl font-bold mb-4">Languages</h2>
+			<div class="flex flex-wrap gap-3">
 				{
-					categoryCounts.map(({ tag, label, count }) => (
-						<li>
-							<a href={withBase(`/tags/${tag}/`)}>
-								{label} <span class="count">({count})</span>
+					languageCounts.map(({ tag, label, count }) =>
+						count > 0 ? (
+							<a href={withBase(`/tags/${tag}/`)} class={chipClass}>
+								{label} <span class="opacity-60">({count})</span>
 							</a>
-						</li>
-					))
+						) : (
+							<span class:list={[chipClass, 'opacity-40 hover:bg-slate-200 hover:text-gray-700']}>
+								{label} <span class="opacity-60">(0)</span>
+							</span>
+						),
+					)
 				}
-			</ul>
-			<h2>Languages</h2>
-			<ul>
-				{
-					languageCounts.map(({ tag, label, count }) => (
-						<li>
-							<a href={withBase(`/tags/${tag}/`)}>
-								{label} <span class="count">({count})</span>
-							</a>
-						</li>
-					))
-				}
-			</ul>
-		</main>
-		<Footer />
-	</body>
-</html>
+			</div>
+		</div>
+	</div>
+</BaseLayout>

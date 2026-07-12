@@ -19,6 +19,8 @@ const blog = defineCollection({
 			tags: z.array(z.enum(CATEGORIES)).default([]),
 			// The language this post is written in: zh-tw, en, or ja
 			lang: z.enum(LANGUAGES).default('en'),
+			// Draft posts are excluded from lists, feeds, and search.
+			draft: z.boolean().default(false),
 		}),
 });
 

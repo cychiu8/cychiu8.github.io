@@ -2,7 +2,9 @@
 
 import mdx from '@astrojs/mdx';
 import sitemap from '@astrojs/sitemap';
+import tailwindcss from '@tailwindcss/vite';
 import { defineConfig, fontProviders } from 'astro/config';
+import { remarkReadingTime } from './src/utils/readTime.ts';
 
 // https://astro.build/config
 export default defineConfig({
@@ -11,28 +13,27 @@ export default defineConfig({
 	site: 'https://cychiu8.github.io',
 	base: '/cy-blog',
 	integrations: [mdx(), sitemap()],
+	markdown: {
+		remarkPlugins: [remarkReadingTime],
+		shikiConfig: {
+			// Dual themes: switched by the `.dark` class via CSS in global.css.
+			themes: {
+				light: 'vitesse-light',
+				dark: 'material-theme-palenight',
+			},
+			wrap: true,
+		},
+	},
+	vite: {
+		plugins: [tailwindcss()],
+	},
 	fonts: [
 		{
-			provider: fontProviders.local(),
-			name: 'Atkinson',
-			cssVariable: '--font-atkinson',
+			provider: fontProviders.google(),
+			name: 'Manrope',
+			cssVariable: '--font-manrope',
+			weights: [400, 500, 600, 700, 800],
 			fallbacks: ['sans-serif'],
-			options: {
-				variants: [
-					{
-						src: ['./src/assets/fonts/atkinson-regular.woff'],
-						weight: 400,
-						style: 'normal',
-						display: 'swap',
-					},
-					{
-						src: ['./src/assets/fonts/atkinson-bold.woff'],
-						weight: 700,
-						style: 'normal',
-						display: 'swap',
-					},
-				],
-			},
 		},
 	],
 });

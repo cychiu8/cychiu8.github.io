@@ -1,0 +1,37 @@
+---
+import type { MarkdownHeading } from 'astro';
+import TableOfContentsHeading from './TableOfContentsHeading.astro';
+
+interface Props {
+	headings: MarkdownHeading[];
+}
+
+export type TocEntry = MarkdownHeading & { subheadings: TocEntry[] };
+
+const { headings } = Astro.props;
+
+// Nest h3+ under the nearest h2 (posts use h2 as their top heading level).
+function buildToc(headings: MarkdownHeading[]): TocEntry[] {
+	const toc: TocEntry[] = [];
+	const parents = new Map<number, TocEntry>();
+	headings.forEach((h) => {
+		const entry: TocEntry = { ...h, subheadings: [] };
+		parents.set(entry.depth, entry);
+		if (entry.depth <= 2) {
+			toc.push(entry);
+		} else {
+			parents.get(entry.depth - 1)?.subheadings.push(entry);
+		}
+	});
+	return toc;
+}
+
+const toc = buildToc(headings);
+---
+
+<nav class="max-w-xs">
+	<p class="font-bold mb-3 text-2xl dark:text-white">Index</p>
+	<ul class="[text-wrap:balance] flex flex-col gap-1">
+		{toc.map((heading) => <TableOfContentsHeading heading={heading} />)}
+	</ul>
+</nav>
