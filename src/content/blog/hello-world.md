@@ -9,7 +9,7 @@ lang: 'en'
 
 This blog is a public notebook. I write it mainly for myself — to keep learning and to remember. If anyone else finds it useful, that's a bonus.
 
-# Things I plan to write about
+## Things I plan to write about
 
 - **life** — life in Japan
 - **opensource** — starting open source, and lessons learned from it

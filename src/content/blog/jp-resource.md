@@ -5,7 +5,13 @@ pubDate: 2026-07-12
 category: 'japan'
 tags: []
 lang: 'en'
-draft: true
+draft: false
 ---
 
+## Topic A
+
 TODO: write this post.
+
+### Head 2
+
+## Topic B

@@ -11,7 +11,7 @@ const { heading } = Astro.props;
 <li class="flex flex-col">
 	<a
 		href={'#' + heading.slug}
-		class="bg-slate-200 dark:bg-slate-800 dark:hover:bg-indigo-400 hover:bg-indigo-300 hover:text-white py-1 px-4 dark:text-white rounded-full mb-2 first-letter:uppercase w-fit line-clamp-2"
+		class="text-gray-600 dark:text-gray-400 hover:text-indigo-600 dark:hover:text-indigo-400 py-1 mb-1 first-letter:uppercase w-fit line-clamp-2 transition-colors duration-200"
 	>
 		{heading.text}
 	</a>
