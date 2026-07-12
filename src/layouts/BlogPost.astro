@@ -12,7 +12,7 @@ interface Props {
 }
 
 const { data, readTime } = Astro.props;
-const { title, description, pubDate, updatedDate, heroImage, tags, lang } = data;
+const { title, description, pubDate, updatedDate, heroImage, category, tags, lang } = data;
 ---
 
 <BaseLayout
@@ -44,8 +44,9 @@ const { title, description, pubDate, updatedDate, heroImage, tags, lang } = data
 			</div>
 
 			<div class="flex flex-wrap justify-center items-center gap-2 gap-y-4 md:gap-5">
-				{tags.map((tag) => <Tag tag={tag} />)}
-				<Tag tag={lang} label={LANGUAGE_INFO[lang].label} />
+				<Tag tag={category} href={`/category/${category}/`} />
+				{tags.map((tag) => <Tag tag={tag} label={`#${tag}`} />)}
+				<Tag tag={lang} label={LANGUAGE_INFO[lang].label} href={`/lang/${lang}/`} />
 			</div>
 		</header>
 

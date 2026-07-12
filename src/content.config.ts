@@ -15,8 +15,10 @@ const blog = defineCollection({
 			pubDate: z.coerce.date(),
 			updatedDate: z.coerce.date().optional(),
 			heroImage: z.optional(image()),
-			// One or more of the five categories: life, japan, opensource, career, tech
-			tags: z.array(z.enum(CATEGORIES)).default([]),
+			// Exactly one of the five categories: life, japan, opensource, career, tech
+			category: z.enum(CATEGORIES),
+			// Free-form tags, e.g. ['kafka', 'tokyo', 'reading']
+			tags: z.array(z.string()).default([]),
 			// The language this post is written in: zh-tw, en, or ja
 			lang: z.enum(LANGUAGES).default('en'),
 			// Draft posts are excluded from lists, feeds, and search.

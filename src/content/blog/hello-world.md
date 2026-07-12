@@ -2,16 +2,16 @@
 title: 'Hello, world: why I started this blog'
 description: 'The first post of my public notebook — what this blog is for and what I plan to write about.'
 pubDate: 2026-07-10
-tags: ['life']
+category: 'life'
+tags: ['blogging']
 lang: 'en'
 ---
 
 This blog is a public notebook. I write it mainly for myself — to keep learning and to remember. If anyone else finds it useful, that's a bonus.
 
-Things I plan to write about:
+# Things I plan to write about
 
-- **life** — life in Japan (pregnancy, our baby)
-- **japan** — everyday things about living in Japan
+- **life** — life in Japan
 - **opensource** — starting open source, and lessons learned from it
 - **career** — records of my career
 - **tech** — technical articles

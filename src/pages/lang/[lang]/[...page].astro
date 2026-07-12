@@ -3,17 +3,16 @@ import type { GetStaticPaths, Page } from 'astro';
 import ListPosts from '../../../components/ListPosts.astro';
 import Pagination from '../../../components/Pagination.astro';
 import TitlePage from '../../../components/TitlePage.astro';
-import { SITE_TITLE } from '../../../consts';
+import { LANGUAGES, LANGUAGE_INFO, SITE_TITLE, type Language } from '../../../consts';
 import BaseLayout from '../../../layouts/BaseLayout.astro';
-import { getPosts, getUsedTags, type Post } from '../../../utils/posts';
+import { getPosts, type Post } from '../../../utils/posts';
 
 export const getStaticPaths = (async ({ paginate }) => {
 	const posts = await getPosts();
-	const tags = await getUsedTags();
 
-	return tags.flatMap(({ tag }) => {
-		const filtered = posts.filter((post) => post.data.tags.includes(tag));
-		return paginate(filtered, { params: { tag }, pageSize: 6 });
+	return LANGUAGES.flatMap((lang) => {
+		const filtered = posts.filter((post) => post.data.lang === lang);
+		return paginate(filtered, { params: { lang }, pageSize: 6 });
 	});
 }) satisfies GetStaticPaths;
 
@@ -21,12 +20,13 @@ interface Props {
 	page: Page<Post>;
 }
 
-const { tag } = Astro.params;
+const { lang } = Astro.params;
 const { page } = Astro.props;
+const label = LANGUAGE_INFO[lang as Language].label;
 ---
 
-<BaseLayout title={`#${tag} - ${SITE_TITLE}`} description={`Posts tagged #${tag}.`}>
-	<TitlePage title={`#${tag}`} />
+<BaseLayout title={`${label} - ${SITE_TITLE}`} description={`Posts written in ${label}.`}>
+	<TitlePage title={label} />
 	<ListPosts posts={page.data} />
 	<Pagination page={page} />
 </BaseLayout>

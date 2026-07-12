@@ -22,7 +22,7 @@ const chipClass = (isActive: boolean) =>
 	<a href={withBase('/blog/')} class={chipClass(activeCategory === undefined)}>View All</a>
 	{
 		categories.map((category) => (
-			<a href={withBase(`/tags/${category}/`)} class={chipClass(activeCategory === category)}>
+			<a href={withBase(`/category/${category}/`)} class={chipClass(activeCategory === category)}>
 				{category}
 			</a>
 		))

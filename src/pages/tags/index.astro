@@ -2,57 +2,78 @@
 import TitlePage from '../../components/TitlePage.astro';
 import { CATEGORIES, LANGUAGES, LANGUAGE_INFO, SITE_TITLE, withBase } from '../../consts';
 import BaseLayout from '../../layouts/BaseLayout.astro';
-import { getPosts } from '../../utils/posts';
+import { getPosts, getUsedTags } from '../../utils/posts';
 
 const posts = await getPosts();
+const tags = await getUsedTags();
 
-const categoryCounts = CATEGORIES.map((tag) => ({
-	tag,
-	label: `#${tag}`,
-	count: posts.filter((post) => post.data.tags.includes(tag)).length,
+const categoryCounts = CATEGORIES.map((category) => ({
+	category,
+	count: posts.filter((post) => post.data.category === category).length,
 }));
 
 const languageCounts = LANGUAGES.map((lang) => ({
-	tag: lang,
+	lang,
 	label: LANGUAGE_INFO[lang].label,
 	count: posts.filter((post) => post.data.lang === lang).length,
 }));
 
 const chipClass =
 	'inline-block bg-slate-200 text-gray-700 dark:bg-slate-800 dark:text-gray-200 rounded-full px-4 py-1.5 text-sm font-semibold hover:bg-indigo-300 hover:text-white dark:hover:bg-indigo-400 transition-colors';
+const emptyChipClass =
+	'inline-block bg-slate-200 text-gray-700 dark:bg-slate-800 dark:text-gray-200 rounded-full px-4 py-1.5 text-sm font-semibold opacity-40';
 ---
 
-<BaseLayout title={`Tags - ${SITE_TITLE}`} description="Browse posts by tag or language.">
+<BaseLayout title={`Tags - ${SITE_TITLE}`} description="Browse posts by tag, category, or language.">
 	<TitlePage title="Tags" />
 
 	<div class="flex flex-col gap-8">
-		<div class="flex flex-wrap gap-3">
-			{
-				categoryCounts.map(({ tag, label, count }) =>
-					count > 0 ? (
-						<a href={withBase(`/tags/${tag}/`)} class={chipClass}>
-							{label} <span class="opacity-60">({count})</span>
-						</a>
+		<div>
+			<div class="flex flex-wrap gap-3">
+				{
+					tags.length > 0 ? (
+						tags.map(({ tag, count }) => (
+							<a href={withBase(`/tags/${encodeURIComponent(tag)}/`)} class={chipClass}>
+								#{tag} <span class="opacity-60">({count})</span>
+							</a>
+						))
 					) : (
-						<span class:list={[chipClass, 'opacity-40 hover:bg-slate-200 hover:text-gray-700']}>
-							{label} <span class="opacity-60">(0)</span>
-						</span>
-					),
-				)
-			}
+						<p class="text-gray-500">No tags yet.</p>
+					)
+				}
+			</div>
+		</div>
+
+		<div>
+			<h2 class="text-2xl font-bold mb-4">Categories</h2>
+			<div class="flex flex-wrap gap-3">
+				{
+					categoryCounts.map(({ category, count }) =>
+						count > 0 ? (
+							<a href={withBase(`/category/${category}/`)} class={chipClass}>
+								{category} <span class="opacity-60">({count})</span>
+							</a>
+						) : (
+							<span class={emptyChipClass}>
+								{category} <span class="opacity-60">(0)</span>
+							</span>
+						),
+					)
+				}
+			</div>
 		</div>
 
 		<div>
 			<h2 class="text-2xl font-bold mb-4">Languages</h2>
 			<div class="flex flex-wrap gap-3">
 				{
-					languageCounts.map(({ tag, label, count }) =>
+					languageCounts.map(({ lang, label, count }) =>
 						count > 0 ? (
-							<a href={withBase(`/tags/${tag}/`)} class={chipClass}>
+							<a href={withBase(`/lang/${lang}/`)} class={chipClass}>
 								{label} <span class="opacity-60">({count})</span>
 							</a>
 						) : (
-							<span class:list={[chipClass, 'opacity-40 hover:bg-slate-200 hover:text-gray-700']}>
+							<span class={emptyChipClass}>
 								{label} <span class="opacity-60">(0)</span>
 							</span>
 						),

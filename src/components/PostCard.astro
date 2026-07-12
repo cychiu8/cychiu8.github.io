@@ -16,7 +16,7 @@ interface Props {
 }
 
 const { post, readTime } = Astro.props;
-const { title, description, pubDate, heroImage, tags, lang } = post.data;
+const { title, description, pubDate, heroImage, category, lang } = post.data;
 
 // Posts without a hero image get a stable placeholder picked from the post id.
 const placeholders = [placeholder1, placeholder2, placeholder3, placeholder4, placeholder5];
@@ -45,7 +45,7 @@ const href = withBase(`/blog/${post.id}/`);
 					{readTime && <span class="text-sm">{readTime}</span>}
 				</div>
 
-				<span class="text-sm">{[...tags, LANGUAGE_INFO[lang].label].join(' · ')}</span>
+				<span class="text-sm">{category} · {LANGUAGE_INFO[lang].label}</span>
 			</div>
 		</div>
 	</a>

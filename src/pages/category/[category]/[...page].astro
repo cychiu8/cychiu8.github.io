@@ -1,0 +1,33 @@
+---
+import type { GetStaticPaths, Page } from 'astro';
+import ListCategories from '../../../components/ListCategories.astro';
+import ListPosts from '../../../components/ListPosts.astro';
+import Pagination from '../../../components/Pagination.astro';
+import TitlePage from '../../../components/TitlePage.astro';
+import { CATEGORIES, SITE_TITLE } from '../../../consts';
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import { getPosts, type Post } from '../../../utils/posts';
+
+export const getStaticPaths = (async ({ paginate }) => {
+	const posts = await getPosts();
+
+	return CATEGORIES.flatMap((category) => {
+		const filtered = posts.filter((post) => post.data.category === category);
+		return paginate(filtered, { params: { category }, pageSize: 6 });
+	});
+}) satisfies GetStaticPaths;
+
+interface Props {
+	page: Page<Post>;
+}
+
+const { category } = Astro.params;
+const { page } = Astro.props;
+---
+
+<BaseLayout title={`${category} - ${SITE_TITLE}`} description={`Posts in the ${category} category.`}>
+	<TitlePage title={category!} />
+	<ListCategories activeCategory={category} />
+	<ListPosts posts={page.data} />
+	<Pagination page={page} />
+</BaseLayout>

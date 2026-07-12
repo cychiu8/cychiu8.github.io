@@ -5,7 +5,8 @@ export const SITE_TITLE = "CY's Notebook";
 export const SITE_DESCRIPTION =
 	'A public notebook — life in Japan, open source, career, and tech. Written mainly for myself, to keep learning and to remember.';
 
-// The five content categories. Every post picks one or more of these as tags.
+// The five content categories. Every post belongs to exactly one;
+// free-form tags are separate (see the `tags` field in the blog schema).
 export const CATEGORIES = ['life', 'japan', 'opensource', 'career', 'tech'] as const;
 export type Category = (typeof CATEGORIES)[number];
 
