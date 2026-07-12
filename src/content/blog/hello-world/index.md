@@ -10,6 +10,8 @@ heroImage: './cover.jpg'
 
 This blog is a public notebook. I write it mainly for myself — to keep learning and to remember. If anyone else finds it useful, that's a bonus.
 
+![An open notebook with a pen, ready for new notes](./notebook.jpg)
+
 ## Things I plan to write about
 
 - **life** — life in Japan
