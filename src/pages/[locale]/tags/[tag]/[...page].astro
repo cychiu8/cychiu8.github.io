@@ -1,0 +1,41 @@
+---
+import type { GetStaticPaths, Page } from 'astro';
+import ListPosts from '../../../../components/ListPosts.astro';
+import Pagination from '../../../../components/Pagination.astro';
+import TitlePage from '../../../../components/TitlePage.astro';
+import { LANGUAGE_INFO, PREFIXED_LOCALES, SITE_TITLE, type Language } from '../../../../consts';
+import BaseLayout from '../../../../layouts/BaseLayout.astro';
+import { getPosts, getUsedTags, type Post } from '../../../../utils/posts';
+
+export const getStaticPaths = (async ({ paginate }) => {
+	const posts = await getPosts();
+	const tags = await getUsedTags();
+
+	return PREFIXED_LOCALES.flatMap((locale) =>
+		tags.flatMap(({ tag }) =>
+			paginate(
+				posts.filter((post) => post.data.tags.includes(tag)),
+				{ params: { locale, tag }, pageSize: 6 },
+			),
+		),
+	);
+}) satisfies GetStaticPaths;
+
+interface Props {
+	page: Page<Post>;
+}
+
+const locale = Astro.params.locale as Language;
+const { tag } = Astro.params;
+const { page } = Astro.props;
+---
+
+<BaseLayout
+	title={`#${tag} - ${SITE_TITLE}`}
+	description={`Posts tagged #${tag}.`}
+	htmlLang={LANGUAGE_INFO[locale].htmlLang}
+>
+	<TitlePage title={`#${tag}`} />
+	<ListPosts posts={page.data} />
+	<Pagination page={page} />
+</BaseLayout>

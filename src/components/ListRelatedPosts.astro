@@ -1,7 +1,7 @@
 ---
 import { Image } from 'astro:assets';
 import placeholder1 from '../assets/blog-placeholder-1.jpg';
-import { withBase } from '../consts';
+import { localePrefix, withBase } from '../consts';
 import type { Post } from '../utils/posts';
 
 interface Props {
@@ -27,7 +27,10 @@ const { posts } = Astro.props;
 						/>
 					</div>
 					<header class="flex justify-center items-center">
-						<a class="font-medium hover:underline" href={withBase(`/blog/${post.id}/`)}>
+						<a
+							class="font-medium hover:underline"
+							href={withBase(`${localePrefix(Astro.url.pathname)}/blog/${post.id}/`)}
+						>
 							{post.data.title}
 						</a>
 					</header>

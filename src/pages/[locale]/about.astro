@@ -1,0 +1,37 @@
+---
+import type { GetStaticPaths } from 'astro';
+import { getEntry, render } from 'astro:content';
+import TitlePage from '../../components/TitlePage.astro';
+import { LANGUAGE_INFO, PREFIXED_LOCALES, SITE_TITLE, type Language } from '../../consts';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+
+export const getStaticPaths = (() => {
+	return PREFIXED_LOCALES.map((locale) => ({ params: { locale } }));
+}) satisfies GetStaticPaths;
+
+const locale = Astro.params.locale as Language;
+
+// Use the translated page when it exists, the default otherwise.
+const translated = await getEntry('pages', `about/${locale}`);
+const about = translated ?? (await getEntry('pages', 'about'));
+if (!about) throw new Error('Missing content file: src/content/pages/about/index.md');
+const { Content } = await render(about);
+const title = about.data.title ?? 'About';
+const htmlLang = translated ? LANGUAGE_INFO[locale].htmlLang : LANGUAGE_INFO.en.htmlLang;
+---
+
+<BaseLayout title={`${title} - ${SITE_TITLE}`} description={about.data.description} htmlLang={htmlLang}>
+	<TitlePage title={title} />
+
+	{
+		!translated && (
+			<p class="text-sm italic text-gray-500 dark:text-gray-400 -mt-8">
+				{LANGUAGE_INFO[locale].untranslatedNote}
+			</p>
+		)
+	}
+
+	<div class="prose prose-lg dark:prose-invert max-w-2xl">
+		<Content />
+	</div>
+</BaseLayout>

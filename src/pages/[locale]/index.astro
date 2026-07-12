@@ -1,0 +1,40 @@
+---
+import type { GetStaticPaths } from 'astro';
+import { getEntry, render } from 'astro:content';
+import ListCategories from '../../components/ListCategories.astro';
+import ListPosts from '../../components/ListPosts.astro';
+import TitlePage from '../../components/TitlePage.astro';
+import { LANGUAGE_INFO, PREFIXED_LOCALES, SITE_TITLE, type Language } from '../../consts';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getPosts } from '../../utils/posts';
+
+export const getStaticPaths = (() => {
+	return PREFIXED_LOCALES.map((locale) => ({ params: { locale } }));
+}) satisfies GetStaticPaths;
+
+const locale = Astro.params.locale as Language;
+
+const MAX_POSTS = 5; // max number of posts to show on the home page
+const posts = await getPosts(MAX_POSTS);
+
+// Use the translated intro when it exists, the default otherwise.
+const home = (await getEntry('pages', `home/${locale}`)) ?? (await getEntry('pages', 'home'));
+if (!home) throw new Error('Missing content file: src/content/pages/home/index.md');
+const { Content: Intro } = await render(home);
+---
+
+<BaseLayout title={SITE_TITLE} htmlLang={LANGUAGE_INFO[locale].htmlLang}>
+	<div class="flex flex-col gap-4">
+		<TitlePage title={SITE_TITLE} />
+		<div class="text-gray-700 dark:text-gray-300 max-w-2xl">
+			<Intro />
+		</div>
+	</div>
+
+	<ListCategories />
+
+	<div>
+		<h2 class="text-lg font-medium tracking-wide text-end">Latest Posts</h2>
+		<ListPosts firstBig={true} posts={posts} />
+	</div>
+</BaseLayout>

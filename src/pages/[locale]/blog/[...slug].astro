@@ -1,31 +1,55 @@
 ---
-import { type CollectionEntry, render } from 'astro:content';
-import ListRelatedPosts from '../../components/ListRelatedPosts.astro';
-import TableOfContents from '../../components/TableOfContents.astro';
-import BlogPost from '../../layouts/BlogPost.astro';
-import { getPostLocale, getPosts, getRelatedPosts } from '../../utils/posts';
+import { render } from 'astro:content';
+import ListRelatedPosts from '../../../components/ListRelatedPosts.astro';
+import TableOfContents from '../../../components/TableOfContents.astro';
+import { LANGUAGE_INFO, PREFIXED_LOCALES, type Language } from '../../../consts';
+import BlogPost from '../../../layouts/BlogPost.astro';
+import {
+	getAllPostEntries,
+	getPostLocale,
+	getPosts,
+	getRelatedPosts,
+	type Post,
+} from '../../../utils/posts';
 
 export async function getStaticPaths() {
-	// Default versions only; translations are served under /<locale>/blog/.
+	// One page per default post per locale, rendering the translation when it
+	// exists and falling back to the default version otherwise.
+	const entries = await getAllPostEntries();
 	const posts = await getPosts();
-	return posts.map((post) => ({
-		params: { slug: post.id },
-		props: post,
-	}));
-}
-type Props = CollectionEntry<'blog'>;
 
-const post = Astro.props;
+	return PREFIXED_LOCALES.flatMap((locale) =>
+		posts.map((post) => {
+			const translation = entries.find((p) => p.id === `${post.id}/${locale}`);
+			return {
+				params: { locale, slug: post.id },
+				props: { post: translation ?? post, basePost: post, isFallback: !translation },
+			};
+		}),
+	);
+}
+
+interface Props {
+	post: Post;
+	basePost: Post;
+	isFallback: boolean;
+}
+
+const locale = Astro.params.locale as Language;
+const { post, basePost, isFallback } = Astro.props;
+
 const posts = await getPosts();
-const relatedPosts = getRelatedPosts(posts, post);
+const relatedPosts = getRelatedPosts(posts, basePost);
 
 const { Content, headings, remarkPluginFrontmatter } = await render(post);
 ---
 
 <BlogPost
 	data={post.data}
-	locale={getPostLocale(post)}
+	locale={isFallback ? getPostLocale(post) : locale}
 	readTime={remarkPluginFrontmatter.minutesRead}
+	untranslatedNote={isFallback ? LANGUAGE_INFO[locale].untranslatedNote : undefined}
+	searchable={!isFallback}
 >
 	<div class="grid grid-cols-1 md:grid-cols-[20%_auto] gap-10 mt-8">
 		<!-- table of contents -->

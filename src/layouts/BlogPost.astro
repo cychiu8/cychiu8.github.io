@@ -6,21 +6,17 @@ import Tag from '../components/Tag.astro';
 import { LANGUAGE_INFO, type Language } from '../consts';
 import BaseLayout from './BaseLayout.astro';
 
-interface PostVersion {
-	label: string;
-	href: string;
-	current: boolean;
-}
-
 interface Props {
 	data: CollectionEntry<'blog'>['data'];
 	locale: Language;
 	readTime?: string;
-	// Language versions of this post; the row only renders when there are 2+.
-	versions?: PostVersion[];
+	// Shown when a locale page falls back to the default-language content.
+	untranslatedNote?: string;
+	// Fallback pages are excluded from the search index to avoid duplicates.
+	searchable?: boolean;
 }
 
-const { data, locale, readTime, versions = [] } = Astro.props;
+const { data, locale, readTime, untranslatedNote, searchable = true } = Astro.props;
 const { title, description, pubDate, updatedDate, heroImage, category, tags } = data;
 ---
 
@@ -31,7 +27,10 @@ const { title, description, pubDate, updatedDate, heroImage, category, tags } = 
 	articleDate={pubDate.toISOString()}
 	htmlLang={LANGUAGE_INFO[locale].htmlLang}
 >
-	<article class="min-w-full md:py-4 sm:max-w-none md:max-w-none" data-pagefind-body>
+	<article
+		class="min-w-full md:py-4 sm:max-w-none md:max-w-none"
+		data-pagefind-body={searchable || undefined}
+	>
 		<header class="mb-3 flex flex-col justify-center items-center gap-6">
 			<div class="flex flex-col gap-2">
 				<div
@@ -58,21 +57,8 @@ const { title, description, pubDate, updatedDate, heroImage, category, tags } = 
 			</div>
 
 			{
-				versions.length > 1 && (
-					<div class="flex items-center gap-3 text-sm text-gray-600 dark:text-gray-400">
-						<span>Read in:</span>
-						{versions.map((version) =>
-							version.current ? (
-								<span class="font-bold underline underline-offset-4 text-black dark:text-white">
-									{version.label}
-								</span>
-							) : (
-								<a class="hover:underline underline-offset-4" href={version.href}>
-									{version.label}
-								</a>
-							),
-						)}
-					</div>
+				untranslatedNote && (
+					<p class="text-sm italic text-gray-500 dark:text-gray-400">{untranslatedNote}</p>
 				)
 			}
 		</header>

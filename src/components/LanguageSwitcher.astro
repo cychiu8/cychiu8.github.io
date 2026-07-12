@@ -1,0 +1,33 @@
+---
+import { LANGUAGES, LANGUAGE_INFO, localePrefix, withBase } from '../consts';
+
+// Swap the locale prefix while staying on the same page. English is the
+// default locale and lives at the unprefixed path.
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+const prefix = localePrefix(Astro.url.pathname);
+const rest = Astro.url.pathname.replace(base, '').replace(prefix, '') || '/';
+
+const targets = LANGUAGES.map((lang) => ({
+	lang,
+	label: LANGUAGE_INFO[lang].label,
+	href: withBase(lang === 'en' ? rest : `/${lang}${rest}`),
+	current: prefix === `/${lang}` || (lang === 'en' && prefix === ''),
+}));
+---
+
+<div class="flex items-center gap-3 text-sm">
+	{
+		targets.map(({ label, href, current }) =>
+			current ? (
+				<span class="font-bold underline underline-offset-4">{label}</span>
+			) : (
+				<a
+					class="text-gray-600 dark:text-gray-400 hover:underline underline-offset-4"
+					href={href}
+				>
+					{label}
+				</a>
+			),
+		)
+	}
+</div>
