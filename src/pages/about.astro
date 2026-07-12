@@ -1,37 +1,20 @@
 ---
+import { getEntry, render } from 'astro:content';
 import TitlePage from '../components/TitlePage.astro';
 import { SITE_TITLE } from '../consts';
 import BaseLayout from '../layouts/BaseLayout.astro';
+
+// Page text lives in src/content/pages/about.md — edit it there.
+const about = await getEntry('pages', 'about');
+if (!about) throw new Error('Missing content file: src/content/pages/about.md');
+const { Content } = await render(about);
+const title = about.data.title ?? 'About';
 ---
 
-<BaseLayout
-	title={`About - ${SITE_TITLE}`}
-	description="Why this blog exists: a public notebook for my own learning and memory."
->
-	<TitlePage title="About" />
+<BaseLayout title={`${title} - ${SITE_TITLE}`} description={about.data.description}>
+	<TitlePage title={title} />
 
 	<div class="prose prose-lg dark:prose-invert max-w-2xl">
-		<p>
-			This blog is a public notebook. I write it mainly <strong>for myself</strong> — to keep
-			learning and to remember. Writing things down forces me to understand them properly, and
-			reading them back later reminds me where I've been. If anyone else finds these notes
-			useful, that's a bonus, not the goal.
-		</p>
-
-		<p>It mixes life and technical content, organized into five categories:</p>
-
-		<ul>
-			<li><strong>life</strong> — life in Japan (pregnancy, baby born)</li>
-			<li><strong>japan</strong> — living in Japan</li>
-			<li><strong>opensource</strong> — starting open source, and lessons learned from it</li>
-			<li><strong>career</strong> — career records</li>
-			<li><strong>tech</strong> — technical articles</li>
-		</ul>
-
-		<p>
-			Posts are written in Traditional Chinese, English, or Japanese — one language per post,
-			whichever fits the topic and my mood. Each post also carries free-form tags for
-			finer-grained topics.
-		</p>
+		<Content />
 	</div>
 </BaseLayout>
