@@ -5,6 +5,7 @@ pubDate: 2026-07-12
 category: 'japan'
 tags: []
 lang: 'en'
+heroImage: '../../assets/covers/jp-resource.jpg'
 draft: false
 ---
 
