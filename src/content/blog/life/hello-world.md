@@ -5,7 +5,7 @@ pubDate: 2026-07-10
 category: 'life'
 tags: ['blogging']
 lang: 'en'
-heroImage: '../../assets/covers/hello-world.jpg'
+heroImage: './assets/hello-world.jpg'
 ---
 
 This blog is a public notebook. I write it mainly for myself — to keep learning and to remember. If anyone else finds it useful, that's a bonus.
