@@ -19,7 +19,8 @@ const blog = defineCollection({
 			category: z.enum(CATEGORIES),
 			// Free-form tags, e.g. ['kafka', 'tokyo', 'reading']
 			tags: z.array(z.string()).default([]),
-			// The language this post is written in: zh-tw, en, or ja
+			// Language of this version. Translation files named <locale>.md derive
+			// their language from the filename; this field covers index.md.
 			lang: z.enum(LANGUAGES).default('en'),
 			// Draft posts are excluded from lists, feeds, and search.
 			draft: z.boolean().default(false),

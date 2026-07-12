@@ -10,7 +10,8 @@ export const SITE_DESCRIPTION =
 export const CATEGORIES = ['life', 'japan', 'opensource', 'career', 'tech'] as const;
 export type Category = (typeof CATEGORIES)[number];
 
-// Each post is written in exactly one language.
+// Locales a post can be translated into. A post folder holds one file per
+// version: index.md (the default) plus optional <locale>.md translations.
 export const LANGUAGES = ['zh-tw', 'en', 'ja'] as const;
 export type Language = (typeof LANGUAGES)[number];
 

@@ -2,12 +2,22 @@
 import { type CollectionEntry, render } from 'astro:content';
 import ListRelatedPosts from '../../components/ListRelatedPosts.astro';
 import TableOfContents from '../../components/TableOfContents.astro';
+import { LANGUAGE_INFO, withBase } from '../../consts';
 import BlogPost from '../../layouts/BlogPost.astro';
-import { getPosts, getRelatedPosts } from '../../utils/posts';
+import {
+	getAllPostEntries,
+	getPostLocale,
+	getPosts,
+	getRelatedPosts,
+	getVersions,
+	isTranslation,
+} from '../../utils/posts';
 
 export async function getStaticPaths() {
-	const posts = await getPosts();
-	return posts.map((post) => ({
+	// Every version gets a page: the default at /blog/<slug>/ and
+	// translations at /blog/<slug>/<locale>/.
+	const entries = await getAllPostEntries();
+	return entries.map((post) => ({
 		params: { slug: post.id },
 		props: post,
 	}));
@@ -15,13 +25,30 @@ export async function getStaticPaths() {
 type Props = CollectionEntry<'blog'>;
 
 const post = Astro.props;
+const entries = await getAllPostEntries();
 const posts = await getPosts();
-const relatedPosts = getRelatedPosts(posts, post);
+
+const versions = getVersions(entries, post).map((version) => ({
+	label: LANGUAGE_INFO[getPostLocale(version)].label,
+	href: withBase(`/blog/${version.id}/`),
+	current: version.id === post.id,
+}));
+
+// Related posts are computed from the post's default version so every
+// language version of a post shows the same suggestions.
+const baseId = isTranslation(post) ? post.id.split('/').slice(0, -1).join('/') : post.id;
+const basePost = entries.find((p) => p.id === baseId) ?? post;
+const relatedPosts = getRelatedPosts(posts, basePost);
 
 const { Content, headings, remarkPluginFrontmatter } = await render(post);
 ---
 
-<BlogPost data={post.data} readTime={remarkPluginFrontmatter.minutesRead}>
+<BlogPost
+	data={post.data}
+	locale={getPostLocale(post)}
+	readTime={remarkPluginFrontmatter.minutesRead}
+	versions={versions}
+>
 	<div class="grid grid-cols-1 md:grid-cols-[20%_auto] gap-10 mt-8">
 		<!-- table of contents -->
 		<aside class="md:flex flex-col gap-8 hidden">

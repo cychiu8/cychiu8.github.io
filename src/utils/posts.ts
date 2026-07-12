@@ -3,25 +3,46 @@ import { CATEGORIES, LANGUAGES, type Category, type Language } from '../consts';
 
 export type Post = CollectionEntry<'blog'>;
 
-// All non-draft posts, newest first. Pass `lang` to keep one language only.
-export async function getPosts(max?: number, lang?: Language): Promise<Post[]> {
-	return (await getCollection('blog'))
-		.filter((post) => !post.data.draft)
-		.filter((post) => !lang || post.data.lang === lang)
+// A translation is a <locale>.md file inside a post folder; its ID ends with
+// the locale segment (e.g. "hello-world/zh-tw"). index.md is the default
+// version and keeps the bare folder ID ("hello-world").
+export function isTranslation(post: Post): boolean {
+	const segments = post.id.split('/');
+	return segments.length > 1 && (LANGUAGES as readonly string[]).includes(segments.at(-1)!);
+}
+
+// The language of a version: from the filename for translations,
+// from frontmatter (default 'en') for the default version.
+export function getPostLocale(post: Post): Language {
+	const last = post.id.split('/').at(-1)!;
+	return (LANGUAGES as readonly string[]).includes(last) ? (last as Language) : post.data.lang;
+}
+
+// Every published entry, including translations (for post pages).
+export async function getAllPostEntries(): Promise<Post[]> {
+	return (await getCollection('blog')).filter((post) => !post.data.draft);
+}
+
+// Default versions only, newest first — what lists, feeds, and counts use.
+export async function getPosts(max?: number): Promise<Post[]> {
+	return (await getAllPostEntries())
+		.filter((post) => !isTranslation(post))
 		.sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
 		.slice(0, max);
 }
 
-// Categories that have at least one published post (optionally in `lang`), in CATEGORIES order.
-export async function getUsedCategories(lang?: Language): Promise<Category[]> {
-	const posts = await getPosts(undefined, lang);
-	return CATEGORIES.filter((category) => posts.some((post) => post.data.category === category));
+// All versions of the post `post` belongs to, in LANGUAGES order.
+export function getVersions(entries: Post[], post: Post): Post[] {
+	const baseId = isTranslation(post) ? post.id.split('/').slice(0, -1).join('/') : post.id;
+	return entries
+		.filter((p) => p.id === baseId || LANGUAGES.some((l) => p.id === `${baseId}/${l}`))
+		.sort((a, b) => LANGUAGES.indexOf(getPostLocale(a)) - LANGUAGES.indexOf(getPostLocale(b)));
 }
 
-// Languages that have at least one published post, in LANGUAGES order.
-export async function getUsedLanguages(): Promise<Language[]> {
+// Categories that have at least one published post, in CATEGORIES order.
+export async function getUsedCategories(): Promise<Category[]> {
 	const posts = await getPosts();
-	return LANGUAGES.filter((lang) => posts.some((post) => post.data.lang === lang));
+	return CATEGORIES.filter((category) => posts.some((post) => post.data.category === category));
 }
 
 // Every tag used by a published post, with its post count, alphabetical.

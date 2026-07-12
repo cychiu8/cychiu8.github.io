@@ -3,16 +3,25 @@ import { Image } from 'astro:assets';
 import type { CollectionEntry } from 'astro:content';
 import FormattedDate from '../components/FormattedDate.astro';
 import Tag from '../components/Tag.astro';
-import { LANGUAGE_INFO } from '../consts';
+import { LANGUAGE_INFO, type Language } from '../consts';
 import BaseLayout from './BaseLayout.astro';
+
+interface PostVersion {
+	label: string;
+	href: string;
+	current: boolean;
+}
 
 interface Props {
 	data: CollectionEntry<'blog'>['data'];
+	locale: Language;
 	readTime?: string;
+	// Language versions of this post; the row only renders when there are 2+.
+	versions?: PostVersion[];
 }
 
-const { data, readTime } = Astro.props;
-const { title, description, pubDate, updatedDate, heroImage, category, tags, lang } = data;
+const { data, locale, readTime, versions = [] } = Astro.props;
+const { title, description, pubDate, updatedDate, heroImage, category, tags } = data;
 ---
 
 <BaseLayout
@@ -20,7 +29,7 @@ const { title, description, pubDate, updatedDate, heroImage, category, tags, lan
 	description={description}
 	image={heroImage}
 	articleDate={pubDate.toISOString()}
-	htmlLang={LANGUAGE_INFO[lang].htmlLang}
+	htmlLang={LANGUAGE_INFO[locale].htmlLang}
 >
 	<article class="min-w-full md:py-4 sm:max-w-none md:max-w-none" data-pagefind-body>
 		<header class="mb-3 flex flex-col justify-center items-center gap-6">
@@ -47,6 +56,25 @@ const { title, description, pubDate, updatedDate, heroImage, category, tags, lan
 				<Tag tag={category} href={`/category/${category}/`} />
 				{tags.map((tag) => <Tag tag={tag} label={`#${tag}`} />)}
 			</div>
+
+			{
+				versions.length > 1 && (
+					<div class="flex items-center gap-3 text-sm text-gray-600 dark:text-gray-400">
+						<span>Read in:</span>
+						{versions.map((version) =>
+							version.current ? (
+								<span class="font-bold underline underline-offset-4 text-black dark:text-white">
+									{version.label}
+								</span>
+							) : (
+								<a class="hover:underline underline-offset-4" href={version.href}>
+									{version.label}
+								</a>
+							),
+						)}
+					</div>
+				)
+			}
 		</header>
 
 		{
