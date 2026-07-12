@@ -5,7 +5,7 @@ import placeholder2 from '../assets/blog-placeholder-2.jpg';
 import placeholder3 from '../assets/blog-placeholder-3.jpg';
 import placeholder4 from '../assets/blog-placeholder-4.jpg';
 import placeholder5 from '../assets/blog-placeholder-5.jpg';
-import { LANGUAGE_INFO, withBase } from '../consts';
+import { withBase } from '../consts';
 import type { Post } from '../utils/posts';
 import FormattedDate from './FormattedDate.astro';
 import Icon from './icons/Icon.astro';
@@ -16,7 +16,7 @@ interface Props {
 }
 
 const { post, readTime } = Astro.props;
-const { title, description, pubDate, heroImage, category, lang } = post.data;
+const { title, description, pubDate, heroImage, category } = post.data;
 
 // Posts without a hero image get a stable placeholder picked from the post id.
 const placeholders = [placeholder1, placeholder2, placeholder3, placeholder4, placeholder5];
@@ -45,7 +45,7 @@ const href = withBase(`/blog/${post.id}/`);
 					{readTime && <span class="text-sm">{readTime}</span>}
 				</div>
 
-				<span class="text-sm">{category} · {LANGUAGE_INFO[lang].label}</span>
+				<span class="text-sm">{category}</span>
 			</div>
 		</div>
 	</a>

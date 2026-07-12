@@ -1,0 +1,47 @@
+---
+import type { GetStaticPaths, Page } from 'astro';
+import ListCategories from '../../../../components/ListCategories.astro';
+import ListPosts from '../../../../components/ListPosts.astro';
+import Pagination from '../../../../components/Pagination.astro';
+import TitlePage from '../../../../components/TitlePage.astro';
+import { LANGUAGE_INFO, SITE_TITLE, type Language } from '../../../../consts';
+import BaseLayout from '../../../../layouts/BaseLayout.astro';
+import { getUsedCategories, getUsedLanguages, getPosts, type Post } from '../../../../utils/posts';
+
+export const getStaticPaths = (async ({ paginate }) => {
+	const languages = await getUsedLanguages();
+	const pages = await Promise.all(
+		languages.map(async (lang) => {
+			const posts = await getPosts(undefined, lang);
+			const categories = await getUsedCategories(lang);
+			return categories.flatMap((category) =>
+				paginate(
+					posts.filter((post) => post.data.category === category),
+					{ params: { lang, category }, pageSize: 6 },
+				),
+			);
+		}),
+	);
+	return pages.flat();
+}) satisfies GetStaticPaths;
+
+interface Props {
+	page: Page<Post>;
+}
+
+const lang = Astro.params.lang as Language;
+const { category } = Astro.params;
+const { label, htmlLang } = LANGUAGE_INFO[lang];
+const { page } = Astro.props;
+---
+
+<BaseLayout
+	title={`${category} (${label}) - ${SITE_TITLE}`}
+	description={`Posts in the ${category} category written in ${label}.`}
+	htmlLang={htmlLang}
+>
+	<TitlePage title={category!} />
+	<ListCategories lang={lang} activeCategory={category} />
+	<ListPosts posts={page.data} />
+	<Pagination page={page} />
+</BaseLayout>

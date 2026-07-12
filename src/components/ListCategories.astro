@@ -1,13 +1,17 @@
 ---
-import { withBase } from '../consts';
+import { withBase, type Language } from '../consts';
 import { getUsedCategories } from '../utils/posts';
 
 interface Props {
 	activeCategory?: string;
+	// When set, chips link inside the language section and only show
+	// categories with posts in that language.
+	lang?: Language;
 }
 
-const { activeCategory } = Astro.props;
-const categories = await getUsedCategories();
+const { activeCategory, lang } = Astro.props;
+const categories = await getUsedCategories(lang);
+const prefix = lang ? `/${lang}` : '';
 
 const chipClass = (isActive: boolean) =>
 	[
@@ -19,10 +23,13 @@ const chipClass = (isActive: boolean) =>
 ---
 
 <div class="relative flex flex-wrap min-w-full gap-5">
-	<a href={withBase('/blog/')} class={chipClass(activeCategory === undefined)}>View All</a>
+	<a href={withBase(`${prefix}/blog/`)} class={chipClass(activeCategory === undefined)}>View All</a>
 	{
 		categories.map((category) => (
-			<a href={withBase(`/category/${category}/`)} class={chipClass(activeCategory === category)}>
+			<a
+				href={withBase(`${prefix}/category/${category}/`)}
+				class={chipClass(activeCategory === category)}
+			>
 				{category}
 			</a>
 		))

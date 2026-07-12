@@ -10,7 +10,7 @@ not the goal.
 
 It mixes life and technical content, organized into five categories:
 
-- **life** — life in Japan (pregnancy, baby born)
+- **life** — life in Japan
 - **japan** — living in Japan
 - **opensource** — starting open source, and lessons learned from it
 - **career** — career records

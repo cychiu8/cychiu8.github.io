@@ -46,7 +46,6 @@ const { title, description, pubDate, updatedDate, heroImage, category, tags, lan
 			<div class="flex flex-wrap justify-center items-center gap-2 gap-y-4 md:gap-5">
 				<Tag tag={category} href={`/category/${category}/`} />
 				{tags.map((tag) => <Tag tag={tag} label={`#${tag}`} />)}
-				<Tag tag={lang} label={LANGUAGE_INFO[lang].label} href={`/lang/${lang}/`} />
 			</div>
 		</header>
 
