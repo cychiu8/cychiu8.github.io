@@ -8,8 +8,7 @@ import { remarkReadingTime } from './src/utils/readTime.ts';
 
 // https://astro.build/config
 export default defineConfig({
-	// GitHub Pages: `site` is your GitHub Pages domain, `base` is the repo name.
-	// If you ever rename the repo to <username>.github.io, delete the `base` line.
+	// GitHub Pages user site: repo is named cychiu8.github.io, served from the root.
 	site: 'https://cychiu8.github.io',
 	integrations: [mdx(), sitemap()],
 	markdown: {
