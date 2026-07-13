@@ -24,8 +24,11 @@ jobs:
         with:
           node-version: 22
           cache: npm
+      # `npm install` instead of `npm ci`: the lockfile is generated on macOS and
+      # omits Linux-only optional deps (npm cross-platform bug), which makes
+      # `npm ci` fail on ubuntu runners.
       - name: Install dependencies
-        run: npm ci
+        run: npm install --no-audit --no-fund
       # Runs `astro build && pagefind --site dist` (pagefind builds the search index)
       - name: Build site
         run: npm run build
