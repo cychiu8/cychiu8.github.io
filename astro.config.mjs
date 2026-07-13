@@ -11,7 +11,6 @@ export default defineConfig({
 	// GitHub Pages: `site` is your GitHub Pages domain, `base` is the repo name.
 	// If you ever rename the repo to <username>.github.io, delete the `base` line.
 	site: 'https://cychiu8.github.io',
-	base: '/cy-blog',
 	integrations: [mdx(), sitemap()],
 	markdown: {
 		remarkPlugins: [remarkReadingTime],
