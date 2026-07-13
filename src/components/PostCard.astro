@@ -6,7 +6,7 @@ import placeholder3 from '../assets/blog-placeholder-3.jpg';
 import placeholder4 from '../assets/blog-placeholder-4.jpg';
 import placeholder5 from '../assets/blog-placeholder-5.jpg';
 import { localePrefix, withBase } from '../consts';
-import type { Post } from '../utils/posts';
+import { getBaseId, type Post } from '../utils/posts';
 import FormattedDate from './FormattedDate.astro';
 import Icon from './icons/Icon.astro';
 
@@ -23,7 +23,7 @@ const placeholders = [placeholder1, placeholder2, placeholder3, placeholder4, pl
 const idHash = [...post.id].reduce((sum, ch) => sum + ch.charCodeAt(0), 0);
 const image = heroImage ?? placeholders[idHash % placeholders.length];
 
-const href = withBase(`${localePrefix(Astro.url.pathname)}/blog/${post.id}/`);
+const href = withBase(`${localePrefix(Astro.url.pathname)}/blog/${getBaseId(post)}/`);
 ---
 
 <article class="grid grid-rows-[300px_auto] md:grid-rows-[300px_220px] min-h-full group">
@@ -63,7 +63,7 @@ const href = withBase(`${localePrefix(Astro.url.pathname)}/blog/${post.id}/`);
 		<footer>
 			<a
 				href={href}
-				class="inline-flex items-center dark:text-white hover:translate-x-1 transition-transform duration-150 ease-in-out font-semibold gap-1"
+				class="inline-flex items-center text-leaf dark:text-honey hover:translate-x-1 transition-transform duration-150 ease-in-out font-semibold gap-1"
 				aria-label={`Read ${title}`}
 			>
 				Read Post <Icon name="arrow-up-right" size={18} />

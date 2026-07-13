@@ -6,7 +6,7 @@ import ListPosts from '../../components/ListPosts.astro';
 import TitlePage from '../../components/TitlePage.astro';
 import { LANGUAGE_INFO, PREFIXED_LOCALES, SITE_TITLE, type Language } from '../../consts';
 import BaseLayout from '../../layouts/BaseLayout.astro';
-import { getPosts } from '../../utils/posts';
+import { getPosts, localizePosts } from '../../utils/posts';
 
 export const getStaticPaths = (() => {
 	return PREFIXED_LOCALES.map((locale) => ({ params: { locale } }));
@@ -15,7 +15,7 @@ export const getStaticPaths = (() => {
 const locale = Astro.params.locale as Language;
 
 const MAX_POSTS = 5; // max number of posts to show on the home page
-const posts = await getPosts(MAX_POSTS);
+const posts = await localizePosts(await getPosts(MAX_POSTS), locale);
 
 // Use the translated intro when it exists, the default otherwise.
 const home = (await getEntry('pages', `home/${locale}`)) ?? (await getEntry('pages', 'home'));

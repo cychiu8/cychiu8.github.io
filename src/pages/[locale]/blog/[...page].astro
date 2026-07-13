@@ -6,13 +6,16 @@ import Pagination from '../../../components/Pagination.astro';
 import TitlePage from '../../../components/TitlePage.astro';
 import { LANGUAGE_INFO, PREFIXED_LOCALES, SITE_TITLE, type Language } from '../../../consts';
 import BaseLayout from '../../../layouts/BaseLayout.astro';
-import { getPosts, type Post } from '../../../utils/posts';
+import { getPosts, localizePosts, type Post } from '../../../utils/posts';
 
 export const getStaticPaths = (async ({ paginate }) => {
 	const posts = await getPosts();
-	return PREFIXED_LOCALES.flatMap((locale) =>
-		paginate(posts, { params: { locale }, pageSize: 6 }),
+	const paths = await Promise.all(
+		PREFIXED_LOCALES.map(async (locale) =>
+			paginate(await localizePosts(posts, locale), { params: { locale }, pageSize: 6 }),
+		),
 	);
+	return paths.flat();
 }) satisfies GetStaticPaths;
 
 interface Props {

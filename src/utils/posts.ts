@@ -18,6 +18,18 @@ export function getPostLocale(post: Post): Language {
 	return (LANGUAGES as readonly string[]).includes(last) ? (last as Language) : post.data.lang;
 }
 
+// The folder ID shared by all versions of a post — what URLs are built from.
+export function getBaseId(post: Post): string {
+	return isTranslation(post) ? post.id.split('/').slice(0, -1).join('/') : post.id;
+}
+
+// Replace each default version with its `locale` translation when one exists,
+// so lists show translated titles/descriptions. Order is preserved.
+export async function localizePosts(posts: Post[], locale: Language): Promise<Post[]> {
+	const entries = await getAllPostEntries();
+	return posts.map((post) => entries.find((p) => p.id === `${post.id}/${locale}`) ?? post);
+}
+
 // Every published entry, including translations (for post pages).
 export async function getAllPostEntries(): Promise<Post[]> {
 	return (await getCollection('blog')).filter((post) => !post.data.draft);
@@ -33,7 +45,7 @@ export async function getPosts(max?: number): Promise<Post[]> {
 
 // All versions of the post `post` belongs to, in LANGUAGES order.
 export function getVersions(entries: Post[], post: Post): Post[] {
-	const baseId = isTranslation(post) ? post.id.split('/').slice(0, -1).join('/') : post.id;
+	const baseId = getBaseId(post);
 	return entries
 		.filter((p) => p.id === baseId || LANGUAGES.some((l) => p.id === `${baseId}/${l}`))
 		.sort((a, b) => LANGUAGES.indexOf(getPostLocale(a)) - LANGUAGES.indexOf(getPostLocale(b)));

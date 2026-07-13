@@ -6,7 +6,7 @@ category: 'japan'
 tags: []
 lang: 'en'
 heroImage: './cover.jpg'
-draft: false
+draft: true
 ---
 
 ## Topic A

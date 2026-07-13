@@ -2,7 +2,7 @@
 import { Image } from 'astro:assets';
 import placeholder1 from '../assets/blog-placeholder-1.jpg';
 import { localePrefix, withBase } from '../consts';
-import type { Post } from '../utils/posts';
+import { getBaseId, type Post } from '../utils/posts';
 
 interface Props {
 	posts: Post[];
@@ -29,7 +29,7 @@ const { posts } = Astro.props;
 					<header class="flex justify-center items-center">
 						<a
 							class="font-medium hover:underline"
-							href={withBase(`${localePrefix(Astro.url.pathname)}/blog/${post.id}/`)}
+							href={withBase(`${localePrefix(Astro.url.pathname)}/blog/${getBaseId(post)}/`)}
 						>
 							{post.data.title}
 						</a>

@@ -53,7 +53,7 @@ const { Content, headings, remarkPluginFrontmatter } = await render(post);
 <script>
 	// Highlight the clicked table-of-contents entry.
 	const links = document.querySelectorAll<HTMLAnchorElement>('aside nav a[href^="#"]');
-	const active = ['text-indigo-600', 'dark:text-indigo-400', 'font-bold'];
+	const active = ['text-leaf', 'dark:text-honey', 'font-bold'];
 	const inactive = ['text-gray-600', 'dark:text-gray-400'];
 
 	links.forEach((link) => {

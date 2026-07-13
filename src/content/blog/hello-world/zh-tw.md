@@ -1,23 +1,12 @@
 ---
-title: '哈囉世界：為什麼我開始寫這個部落格'
-description: '公開筆記本的第一篇文章 — 這個部落格的目的，以及我打算寫的內容。'
-pubDate: 2026-07-10
+title: 'Hello Word!'
+description: '筆記本的第一篇文章'
+pubDate: 2026-07-13
 category: 'life'
 tags: ['blogging']
 heroImage: './cover.jpg'
 ---
 
-這個部落格是一本公開的筆記本。我寫它主要是為了自己 — 為了持續學習、也為了記住。如果剛好對其他人有幫助，那是額外的收穫。
+## Hello World!
 
-![一本攤開的筆記本和一支筆，準備寫下新的筆記](./notebook.jpg)
-
-## 我打算寫的主題
-
-- **life** — 在日本的生活
-- **opensource** — 開始參與開源，以及從中學到的事
-- **career** — 職涯紀錄
-- **tech** — 技術文章
-
-文章會用當下最合適的語言書寫 — 繁體中文、英文或日文 — 每篇文章一種語言。
-
-先這樣。哈囉，世界！
+先這樣。Hello World！

@@ -1,7 +1,9 @@
 /*
   Global styles — Tailwind 4.
-  Design recreated after the look of https://blog-template-gray.vercel.app/
-  (light: near-white; dark: #0a0910), body font Manrope.
+  Base look is black & white; the Color Hunt palette
+  https://colorhunt.co/palette/ffbf00fff78d467235283f24
+  (honey #FFBF00, cream #FFF78D, leaf #467235, forest #283F24)
+  is reserved for small accents only. Body font Manrope.
 */
 
 @import 'tailwindcss';
@@ -12,14 +14,32 @@
 
 @theme {
 	--font-body: var(--font-manrope), ui-sans-serif, system-ui, sans-serif;
-	/* The template's "white" is a soft off-white. */
-	--color-paper: #f8f9fa;
-	--color-night: #0a0910;
+	--color-honey: #ffbf00;
+	--color-cream: #fff78d;
+	--color-leaf: #467235;
+	--color-forest: #283f24;
+	/* Page backgrounds stay plain white/black. */
+	--color-paper: #ffffff;
+	--color-night: #0a0a0a;
 }
 
 @layer base {
 	html {
 		font-family: var(--font-body);
+	}
+
+	::selection {
+		background-color: var(--color-honey);
+		color: var(--color-forest);
+	}
+
+	/* Prose stays neutral; only links and blockquote borders take accent
+	   color (`dark:prose-invert` reads the --tw-prose-invert-* set). */
+	.prose {
+		--tw-prose-links: var(--color-leaf);
+		--tw-prose-quote-borders: var(--color-honey);
+		--tw-prose-invert-links: var(--color-honey);
+		--tw-prose-invert-quote-borders: var(--color-honey);
 	}
 
 	/* Headings keep strong contrast in both themes, including inside prose. */
@@ -59,11 +79,14 @@
 	z-index: -1;
 }
 
-/* Pagefind UI theming */
+/* Pagefind UI theming — neutral surfaces, accent highlight color. */
+:root {
+	--pagefind-ui-primary: #467235;
+}
 .dark {
-	--pagefind-ui-primary: #eeeeee;
+	--pagefind-ui-primary: #ffbf00;
 	--pagefind-ui-text: #eeeeee;
-	--pagefind-ui-background: #152028;
-	--pagefind-ui-border: #152028;
-	--pagefind-ui-tag: #152028;
+	--pagefind-ui-background: #0a0a0a;
+	--pagefind-ui-border: #333333;
+	--pagefind-ui-tag: #333333;
 }
