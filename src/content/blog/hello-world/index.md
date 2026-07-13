@@ -5,7 +5,7 @@ pubDate: 2026-07-13
 category: 'life'
 tags: ['blogging']
 lang: 'en'
-heroImage: './cover.jpg'
+heroImage: './attachements/cover.jpg'
 ---
 
 ## Hello World!

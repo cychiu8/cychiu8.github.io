@@ -4,7 +4,7 @@ description: '筆記本的第一篇文章'
 pubDate: 2026-07-13
 category: 'life'
 tags: ['blogging']
-heroImage: './cover.jpg'
+heroImage: './attachements/cover.jpg'
 ---
 
 ## Hello World!

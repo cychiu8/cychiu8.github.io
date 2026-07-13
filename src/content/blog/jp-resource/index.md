@@ -5,7 +5,7 @@ pubDate: 2026-07-12
 category: 'japan'
 tags: []
 lang: 'en'
-heroImage: './cover.jpg'
+heroImage: './attachements/cover.jpg'
 draft: true
 ---
 
